@@ -125,8 +125,8 @@
       return;
     }
     const btn = document.getElementById('register-btn');
-    btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Creating account...';
+    setTimeout(function() { btn.disabled = true; }, 10);
   });
 </script>
 </body>

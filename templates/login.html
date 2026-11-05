@@ -99,8 +99,8 @@
 
   document.getElementById('login-form').addEventListener('submit', function(e) {
     const btn = document.getElementById('login-btn');
-    btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Signing in...';
+    setTimeout(function() { btn.disabled = true; }, 10);
   });
 </script>
 </body>
