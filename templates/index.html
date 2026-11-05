@@ -48,6 +48,7 @@
     </button>
     {% if current_user %}
       <a href="/dashboard" class="btn btn-primary btn-sm"><i class="bi bi-grid"></i> Dashboard</a>
+      <a href="/logout" class="btn btn-outline-primary btn-sm" style="border-color:rgba(255,255,255,0.3);color:#fff;">Logout</a>
     {% else %}
       <a href="/login" class="btn btn-outline-primary btn-sm" style="border-color:rgba(255,255,255,0.3);color:#fff;">Login</a>
       <a href="/register" class="btn btn-primary btn-sm"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
@@ -71,6 +72,7 @@
       {% if current_user %}
         <a href="/generate" class="btn btn-primary btn-lg"><i class="bi bi-stars"></i> Generate Caption</a>
         <a href="/dashboard" class="btn btn-lg" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;backdrop-filter:blur(10px)"><i class="bi bi-grid"></i> Dashboard</a>
+        <a href="/logout" class="btn btn-lg" style="background:rgba(255,80,80,0.15);border:1px solid rgba(255,80,80,0.3);color:#fff;backdrop-filter:blur(10px)"><i class="bi bi-box-arrow-right"></i> Logout</a>
       {% else %}
         <a href="/register" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff"></i> Start for Free</a>
         <a href="/login" class="btn btn-lg" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;backdrop-filter:blur(10px)"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>

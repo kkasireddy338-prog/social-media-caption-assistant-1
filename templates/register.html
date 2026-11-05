@@ -28,6 +28,16 @@
     <h1 class="auth-title">Create your account</h1>
     <p class="auth-subtitle">Join thousands of creators generating better captions.</p>
 
+    {% if already_logged_in %}
+      <div class="alert alert-info" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <span>👤 Currently signed in as <strong>{{ current_username }}</strong></span>
+        <div>
+          <a href="/dashboard" class="btn btn-sm btn-primary" style="margin-right:6px;padding:4px 10px;font-size:0.75rem;">Dashboard</a>
+          <a href="/logout" class="btn btn-sm" style="background:rgba(255,255,255,0.15);color:#fff;padding:4px 10px;font-size:0.75rem;">Logout</a>
+        </div>
+      </div>
+    {% endif %}
+
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% for category, message in messages %}
         <div class="alert alert-{{ category }}">

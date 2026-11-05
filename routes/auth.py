@@ -28,8 +28,8 @@ def validate_password(password):
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard.dashboard'))
+    already_logged_in = 'user_id' in session
+    username_session = session.get('username')
 
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
@@ -51,7 +51,8 @@ def register():
         if errors:
             for err in errors:
                 flash(err, "danger")
-            return render_template('register.html', username=username, email=email)
+            return render_template('register.html', username=username, email=email,
+                                   already_logged_in=already_logged_in, current_username=username_session)
 
         # Check uniqueness
         conn = get_db()
@@ -62,7 +63,8 @@ def register():
         if existing:
             conn.close()
             flash("Username or email already registered.", "danger")
-            return render_template('register.html', username=username, email=email)
+            return render_template('register.html', username=username, email=email,
+                                   already_logged_in=already_logged_in, current_username=username_session)
 
         # Hash password and store
         password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
@@ -80,13 +82,13 @@ def register():
         flash(f"Welcome, {username}! Your account has been created.", "success")
         return redirect(url_for('dashboard.dashboard'))
 
-    return render_template('register.html')
+    return render_template('register.html', already_logged_in=already_logged_in, current_username=username_session)
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard.dashboard'))
+    already_logged_in = 'user_id' in session
+    username_session = session.get('username')
 
     if request.method == 'POST':
         email = request.form.get('email', '').strip().lower()
@@ -94,7 +96,7 @@ def login():
 
         if not email or not password:
             flash("Please fill in all fields.", "danger")
-            return render_template('login.html', email=email)
+            return render_template('login.html', email=email, already_logged_in=already_logged_in, current_username=username_session)
 
         conn = get_db()
         cursor = conn.cursor()
@@ -110,9 +112,9 @@ def login():
             return redirect(url_for('dashboard.dashboard'))
         else:
             flash("Invalid email or password.", "danger")
-            return render_template('login.html', email=email)
+            return render_template('login.html', email=email, already_logged_in=already_logged_in, current_username=username_session)
 
-    return render_template('login.html')
+    return render_template('login.html', already_logged_in=already_logged_in, current_username=username_session)
 
 
 @auth_bp.route('/logout')
