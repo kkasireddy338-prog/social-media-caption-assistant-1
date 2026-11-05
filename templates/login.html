@@ -100,7 +100,8 @@
   document.getElementById('login-form').addEventListener('submit', function(e) {
     const btn = document.getElementById('login-btn');
     btn.innerHTML = '<span class="spinner"></span> Signing in...';
-    setTimeout(function() { btn.disabled = true; }, 10);
+    btn.style.pointerEvents = 'none';
+    btn.style.opacity = '0.8';
   });
 </script>
 </body>

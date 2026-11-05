@@ -121,12 +121,13 @@
     const cpwd = document.getElementById('confirm_password').value;
     if (pwd !== cpwd) {
       e.preventDefault();
-      Toast.error('Passwords do not match!');
-      return;
+      alert('Passwords do not match. Please re-enter your password.');
+      return false;
     }
     const btn = document.getElementById('register-btn');
     btn.innerHTML = '<span class="spinner"></span> Creating account...';
-    setTimeout(function() { btn.disabled = true; }, 10);
+    btn.style.pointerEvents = 'none';
+    btn.style.opacity = '0.8';
   });
 </script>
 </body>
