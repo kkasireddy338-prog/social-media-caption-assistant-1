@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, session
 from config import Config
 from database.db import init_db
@@ -6,7 +7,12 @@ from routes.captions import captions_bp
 from routes.dashboard import dashboard_bp
 
 def create_app():
-    app = Flask(__name__)
+    base_dir = os.path.abspath(os.path.dirname(__file__))
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(base_dir, 'templates'),
+        static_folder=os.path.join(base_dir, 'static')
+    )
     app.config.from_object(Config)
     app.secret_key = Config.SECRET_KEY
 
@@ -20,9 +26,12 @@ def create_app():
     def index():
         return render_template('index.html')
 
-    # Initialize database on startup
+    # Initialize database on startup safely
     with app.app_context():
-        init_db()
+        try:
+            init_db()
+        except Exception as e:
+            print(f"[Warning] DB initialization failed: {e}")
 
     # Context processor to inject user info into all templates
     @app.context_processor
