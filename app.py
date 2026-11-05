@@ -11,7 +11,8 @@ def create_app():
     app = Flask(
         __name__,
         template_folder=os.path.join(base_dir, 'templates'),
-        static_folder=os.path.join(base_dir, 'static')
+        static_folder=os.path.join(base_dir, 'static'),
+        static_url_path='/static'
     )
     app.config.from_object(Config)
     app.secret_key = Config.SECRET_KEY
@@ -21,8 +22,10 @@ def create_app():
     app.register_blueprint(captions_bp)
     app.register_blueprint(dashboard_bp)
 
-    # Landing page route
+    # Landing page route (with fallbacks for serverless rewrites)
     @app.route('/')
+    @app.route('/api/index')
+    @app.route('/api')
     def index():
         return render_template('index.html')
 
