@@ -1,5 +1,6 @@
 import os
 from flask import Flask, render_template, session
+from werkzeug.middleware.proxy_fix import ProxyFix
 from config import Config
 from database.db import init_db
 from routes.auth import auth_bp
@@ -22,10 +23,8 @@ def create_app():
     app.register_blueprint(captions_bp)
     app.register_blueprint(dashboard_bp)
 
-    # Landing page route (with fallbacks for serverless rewrites)
+    # Landing page route
     @app.route('/')
-    @app.route('/api/index')
-    @app.route('/api')
     def index():
         return render_template('index.html')
 
@@ -48,6 +47,8 @@ def create_app():
                 }
             }
         return {'current_user': None}
+
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     return app
 

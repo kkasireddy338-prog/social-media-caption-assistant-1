@@ -25,7 +25,6 @@ jobs:
       - name: Check Python syntax
         run: |
           python -m py_compile app.py
-          python -m py_compile api/index.py
           python -m py_compile config.py
           python -m py_compile database/db.py
           python -m py_compile services/ai_service.py
