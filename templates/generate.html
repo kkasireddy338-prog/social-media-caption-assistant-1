@@ -1,0 +1,128 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Generate Caption{% endblock %}
+{% block topbar_title %}Generate Caption{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>✨ AI Caption Generator</h1>
+  <p>Fill in the details below and get 3 unique captions instantly.</p>
+</div>
+
+<div style="display:grid;grid-template-columns:400px 1fr;gap:28px;align-items:flex-start;" class="generate-layout">
+  <!-- Form Card -->
+  <div class="card" style="position:sticky;top:calc(var(--topbar-height) + 20px);">
+    <div class="card-body">
+      <form id="caption-form" autocomplete="off">
+
+        <div class="form-group">
+          <label class="form-label" for="topic">
+            📝 Topic / Description
+            <span style="color:var(--danger);margin-left:2px;">*</span>
+          </label>
+          <textarea class="form-control" id="topic" name="topic"
+            placeholder="e.g. Enjoying a sunset hike in the mountains with friends after a long week..."
+            rows="3" required></textarea>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label class="form-label" for="platform">📱 Platform</label>
+          <select class="form-select" id="platform" name="platform" onchange="updatePlatformInfo(this.value)">
+            {% for p in platforms %}
+            <option value="{{ p }}">{{ p }}</option>
+            {% endfor %}
+          </select>
+          <div id="platform-info" style="font-size:0.72rem;color:var(--text-muted);margin-top:5px;padding:6px 10px;background:var(--bg-primary);border-radius:6px;">
+            📏 Caption limit: <strong id="platform-limit">2,200</strong> characters
+          </div>
+        </div>
+          <div class="form-group">
+            <label class="form-label" for="category">🏷️ Category</label>
+            <select class="form-select" id="category" name="category">
+              {% for c in categories %}
+              <option value="{{ c }}">{{ c }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label class="form-label" for="tone">🎭 Writing Tone</label>
+            <select class="form-select" id="tone" name="tone">
+              {% for t in tones %}
+              <option value="{{ t }}">{{ t }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="length">📏 Length</label>
+            <select class="form-select" id="length" name="length">
+              {% for l in lengths %}
+              <option value="{{ l }}">{{ l | capitalize }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="keywords">🔑 Keywords <span style="font-weight:400;color:var(--text-muted)">(optional)</span></label>
+          <input type="text" class="form-control" id="keywords" name="keywords"
+            placeholder="e.g. adventure, nature, peace, mindfulness">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 btn-lg" id="generate-btn" style="font-size:1rem;">
+          <i class="bi bi-stars"></i> Generate Captions
+        </button>
+      </form>
+
+      <div style="margin-top:16px;padding:12px 16px;background:var(--bg-primary);border-radius:10px;border:1px solid var(--border);">
+        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.6;">
+          💡 <strong>Tip:</strong> Be specific for better results. Include a mood, location, action, or emotion to get more personalized captions.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Column -->
+  <div id="results-column">
+    <!-- Empty state -->
+    <div id="generate-empty" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;color:var(--text-secondary);text-align:center;">
+      <div style="font-size:4.5rem;margin-bottom:20px;opacity:0.25;line-height:1;">✨</div>
+      <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:8px;color:var(--text-primary);">Your captions will appear here</h3>
+      <p style="font-size:0.875rem;max-width:320px;line-height:1.6;">Fill in the form on the left with your post topic, choose your platform and tone, then click Generate.</p>
+    </div>
+
+    <!-- Generated captions container -->
+    <div id="captions-results" style="display:none;flex-direction:column;gap:20px;">
+      <!-- Filled by JavaScript -->
+    </div>
+  </div>
+</div>
+
+<style>
+  @media(max-width:960px) {
+    .generate-layout { grid-template-columns: 1fr !important; }
+    .card[style*="sticky"] { position: static !important; }
+  }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.getElementById('caption-form').addEventListener('submit', function() {
+    document.getElementById('generate-empty').style.display = 'none';
+    const res = document.getElementById('captions-results');
+    res.style.display = 'flex';
+  });
+
+  const LIMITS = {
+    'Instagram': '2,200', 'Facebook': '63,206',
+    'LinkedIn': '3,000', 'X (Twitter)': '280', 'YouTube': '5,000'
+  };
+  function updatePlatformInfo(platform) {
+    const limit = LIMITS[platform] || '2,200';
+    document.getElementById('platform-limit').textContent = limit;
+  }
+</script>
+{% endblock %}

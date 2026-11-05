@@ -1,0 +1,21 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Favorites{% endblock %}
+{% block topbar_title %}Favorites{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h1>❤️ Favorites</h1>
+      <p id="fav-count" style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">Your most loved captions — all in one place.</p>
+    </div>
+    <a href="/generate" class="btn btn-primary"><i class="bi bi-stars"></i> Generate New</a>
+  </div>
+</div>
+
+<div class="grid-auto" id="favorites-grid">
+  <div class="loading-overlay">
+    <div class="spinner spinner-primary"></div>
+  </div>
+</div>
+{% endblock %}

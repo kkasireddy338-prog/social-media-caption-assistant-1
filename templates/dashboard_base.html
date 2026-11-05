@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} — CaptionAI</title>
+  <meta name="description" content="{% block meta_description %}Social Media Caption Assistant Dashboard{% endblock %}">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+  <meta name="theme-color" content="#7c3aed">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="flask-flash d-none" data-message="{{ message }}" data-category="{{ category }}"></div>
+  {% endfor %}
+{% endwith %}
+
+<div id="toast-container" class="toast-container"></div>
+<div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+<div class="app-wrapper">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">✨</div>
+      <div class="brand-name">
+        CaptionAI
+        <span>Social Media Assistant</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <a href="/dashboard" class="nav-item" data-path="/dashboard">
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+        Dashboard
+      </a>
+      <a href="/generate" class="nav-item" data-path="/generate">
+        <span class="nav-icon"><i class="bi bi-stars"></i></span>
+        Generate Caption
+      </a>
+
+      <div class="sidebar-section-label">Library</div>
+      <a href="/my-captions" class="nav-item" data-path="/my-captions">
+        <span class="nav-icon"><i class="bi bi-bookmark-fill"></i></span>
+        My Captions
+      </a>
+      <a href="/hashtags" class="nav-item" data-path="/hashtags">
+        <span class="nav-icon"><i class="bi bi-hash"></i></span>
+        Hashtag Generator
+      </a>
+      <a href="/history" class="nav-item" data-path="/history">
+        <span class="nav-icon"><i class="bi bi-clock-history"></i></span>
+        Caption History
+      </a>
+      <a href="/favorites" class="nav-item" data-path="/favorites">
+        <span class="nav-icon"><i class="bi bi-heart-fill"></i></span>
+        Favorites
+      </a>
+
+      <div class="sidebar-section-label">Account</div>
+      <a href="/profile" class="nav-item" data-path="/profile">
+        <span class="nav-icon"><i class="bi bi-person-fill"></i></span>
+        Profile
+      </a>
+      <a href="/settings" class="nav-item" data-path="/settings">
+        <span class="nav-icon"><i class="bi bi-gear-fill"></i></span>
+        Settings
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info-sidebar" style="margin-bottom:10px;">
+        <div class="user-avatar-sm">{{ current_user.username[0].upper() if current_user else '?' }}</div>
+        <div class="user-info-text">
+          <div class="uname">{{ current_user.username if current_user else 'Guest' }}</div>
+          <div class="uemail">{{ current_user.email if current_user else '' }}</div>
+        </div>
+      </div>
+      <a href="/logout" class="nav-item" style="color:rgba(255,80,80,0.8);">
+        <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+        Logout
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle menu">
+          <i class="bi bi-list"></i>
+        </button>
+        <span class="topbar-title">{% block topbar_title %}Dashboard{% endblock %}</span>
+      </div>
+      <div class="topbar-right">
+        <button class="theme-toggle" title="Toggle theme">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+        <a href="/generate" class="btn btn-primary btn-sm" style="display:none" id="topbar-generate-btn">
+          <i class="bi bi-stars"></i> Generate
+        </a>
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.85rem;cursor:pointer;" onclick="window.location='/profile'">
+          {{ current_user.username[0].upper() if current_user else '?' }}
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block extra_scripts %}{% endblock %}
+<script>
+  // Show generate button on non-generate pages
+  if (window.location.pathname !== '/generate') {
+    document.getElementById('topbar-generate-btn').style.display = 'flex';
+  }
+</script>
+</body>
+</html>

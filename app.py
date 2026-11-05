@@ -1,0 +1,46 @@
+from flask import Flask, render_template, session
+from config import Config
+from database.db import init_db
+from routes.auth import auth_bp
+from routes.captions import captions_bp
+from routes.dashboard import dashboard_bp
+
+def create_app():
+    app = Flask(__name__)
+    app.config.from_object(Config)
+    app.secret_key = Config.SECRET_KEY
+
+    # Register blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(captions_bp)
+    app.register_blueprint(dashboard_bp)
+
+    # Landing page route
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    # Initialize database on startup
+    with app.app_context():
+        init_db()
+
+    # Context processor to inject user info into all templates
+    @app.context_processor
+    def inject_user():
+        if 'user_id' in session:
+            return {
+                'current_user': {
+                    'id': session.get('user_id'),
+                    'username': session.get('username'),
+                    'email': session.get('email')
+                }
+            }
+        return {'current_user': None}
+
+    return app
+
+
+app = create_app()
+
+if __name__ == '__main__':
+    app.run(debug=Config.DEBUG, host='0.0.0.0', port=5000)

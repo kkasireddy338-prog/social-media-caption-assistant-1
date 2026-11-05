@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Social Media Caption Assistant — Create Captions That Stand Out</title>
+  <meta name="description" content="AI-powered social media caption and hashtag generator. Create engaging captions for Instagram, Facebook, LinkedIn, X, and YouTube in seconds.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .platforms-strip { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; padding: 40px 60px; background: var(--bg-secondary); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .platform-pill { display: flex; align-items: center; gap: 10px; padding: 12px 22px; border-radius: 50px; background: var(--bg-primary); border: 1.5px solid var(--border); font-weight: 600; font-size: 0.9rem; color: var(--text-primary); transition: all 0.3s; }
+    .platform-pill:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+    .cta-section { background: var(--gradient-hero); padding: 100px 60px; text-align: center; color: #fff; }
+    .cta-section h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+    .cta-section p { font-size: 1.05rem; color: rgba(255,255,255,0.65); margin-bottom: 32px; }
+    .mobile-menu-landing { display: none; background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.8); font-size: 1.3rem; }
+    @media(max-width:768px) { .mobile-menu-landing { display: flex; } .cta-section { padding: 60px 24px; } .cta-section h2 { font-size: 1.8rem; } .platforms-strip { padding: 30px 24px; } }
+  </style>
+</head>
+<body>
+
+<!-- Flash Messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="flask-flash d-none" data-message="{{ message }}" data-category="{{ category }}"></div>
+  {% endfor %}
+{% endwith %}
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Navigation -->
+<nav class="landing-nav" id="landing-nav">
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">✨</div>
+    <span class="logo-text">CaptionAI</span>
+  </a>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#platforms">Platforms</a>
+    <a href="#testimonials">Testimonials</a>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="theme-toggle-landing" title="Toggle theme">
+      <i class="bi bi-moon-fill"></i>
+    </button>
+    {% if current_user %}
+      <a href="/dashboard" class="btn btn-primary btn-sm"><i class="bi bi-grid"></i> Dashboard</a>
+    {% else %}
+      <a href="/login" class="btn btn-outline-primary btn-sm" style="border-color:rgba(255,255,255,0.3);color:#fff;">Login</a>
+      <a href="/register" class="btn btn-primary btn-sm"><i class="bi bi-rocket-takeoff"></i> Get Started</a>
+    {% endif %}
+  </div>
+  <button class="mobile-menu-landing" id="mobile-menu-btn" aria-label="Menu">
+    <i class="bi bi-list"></i>
+  </button>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span>🤖</span>
+      <span>AI-Powered Caption Generator</span>
+    </div>
+    <h1>Create Captions That Make Your <span class="gradient-text">Posts Stand Out.</span></h1>
+    <p>Generate creative, engaging social media captions and hashtags in seconds using the power of AI. Perfect for Instagram, Facebook, LinkedIn, X, and YouTube.</p>
+    <div class="hero-actions">
+      {% if current_user %}
+        <a href="/generate" class="btn btn-primary btn-lg"><i class="bi bi-stars"></i> Generate Caption</a>
+        <a href="/dashboard" class="btn btn-lg" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;backdrop-filter:blur(10px)"><i class="bi bi-grid"></i> Dashboard</a>
+      {% else %}
+        <a href="/register" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff"></i> Start for Free</a>
+        <a href="/login" class="btn btn-lg" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;backdrop-filter:blur(10px)"><i class="bi bi-box-arrow-in-right"></i> Sign In</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="floating-card">
+      <div class="platform-icons">
+        <div class="platform-icon pi-ig">📸</div>
+        <div class="platform-icon pi-fb">👥</div>
+        <div class="platform-icon pi-li">💼</div>
+        <div class="platform-icon pi-tw">🐦</div>
+        <div class="platform-icon pi-yt">▶️</div>
+      </div>
+      <div class="mock-caption">
+        ✨ Chasing horizons one adventure at a time 🌍 Every journey begins with a single step — and mine starts right here. The world is waiting and I'm ready!
+      </div>
+      <div class="mock-tags">#travel #wanderlust #adventure #explore #travelgram</div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <div style="flex:1;height:6px;border-radius:3px;background:var(--gradient-primary);"></div>
+        <div style="flex:0.6;height:6px;border-radius:3px;background:rgba(255,255,255,0.1);"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Platforms Strip -->
+<div class="platforms-strip" id="platforms">
+  <div class="platform-pill"><span>📸</span> Instagram</div>
+  <div class="platform-pill"><span>👥</span> Facebook</div>
+  <div class="platform-pill"><span>💼</span> LinkedIn</div>
+  <div class="platform-pill"><span>🐦</span> X (Twitter)</div>
+  <div class="platform-pill"><span>▶️</span> YouTube</div>
+</div>
+
+<!-- Features Section -->
+<section class="section" id="features" style="background:var(--bg-primary)">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-label">✨ Features</div>
+    <h2 class="section-title">Everything You Need to <br>Dominate Social Media</h2>
+    <p class="section-subtitle">From AI caption generation to hashtag optimization — CaptionAI gives you the tools to create content that converts.</p>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🤖</div>
+        <h3>AI Caption Generator</h3>
+        <p>Get 3 unique caption suggestions instantly. Choose your platform, tone, length, and category for perfectly tailored results.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">#️⃣</div>
+        <h3>Smart Hashtag Tool</h3>
+        <p>Generate popular, niche, and general hashtags categorized to maximize your reach and discoverability.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Multi-Platform Support</h3>
+        <p>Optimized captions for Instagram, Facebook, LinkedIn, X (Twitter), and YouTube — each with platform-specific best practices.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3>8 Writing Tones</h3>
+        <p>Funny, Professional, Creative, Inspirational, Emotional, Casual, Promotional, or Educational — match your brand voice perfectly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💾</div>
+        <h3>Caption Library</h3>
+        <p>Save, organize, and manage all your captions. Filter by platform, category, or search instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">❤️</div>
+        <h3>Favorites Collection</h3>
+        <p>Heart your best captions and access them anytime from your personal favorites collection.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section" id="how-it-works" style="background:var(--bg-secondary)">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;">
+    <div class="section-label">🚀 Simple Process</div>
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle" style="margin:0 auto 50px;">Generate professional captions in three simple steps.</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <h3>Describe Your Post</h3>
+        <p>Tell us what your post is about — a topic, event, product, or idea. Add optional keywords for better results.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <h3>Choose Your Style</h3>
+        <p>Select your platform, content category, writing tone, and caption length to get perfectly customized results.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <h3>Get 3 AI Captions</h3>
+        <p>Receive 3 unique, ready-to-use captions with hashtags. Copy, save, or favorite your best picks.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <h3>Post & Grow!</h3>
+        <p>Use your captions directly on social media and watch your engagement soar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section" id="testimonials" style="background:var(--bg-primary)">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div class="section-label">💬 Testimonials</div>
+    <h2 class="section-title">What Users Are Saying</h2>
+    <p class="section-subtitle mb-0" style="margin-bottom:4px;">Read what our community thinks about CaptionAI.</p>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:40px;"><em>⚠️ The testimonials below are sample content for demonstration purposes only.</em></p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;">
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"CaptionAI completely transformed my Instagram strategy. I went from spending hours writing captions to having professional ones ready in seconds. My engagement doubled!"</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">S</div>
+          <div>
+            <div class="testimonial-name">Sarah K. <span class="sample-label">(Sample)</span></div>
+            <div class="testimonial-role">Instagram Influencer · 50K followers</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"As a small business owner, I never had time for social media content. CaptionAI writes captions that sound professional and on-brand every single time."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">M</div>
+          <div>
+            <div class="testimonial-name">Marcus T. <span class="sample-label">(Sample)</span></div>
+            <div class="testimonial-role">E-commerce Entrepreneur</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="stars">★★★★★</div>
+        <p class="testimonial-text">"The hashtag generator alone is worth it. I discovered niche hashtags I never would have thought of, and my LinkedIn posts started reaching 10x more people."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">P</div>
+          <div>
+            <div class="testimonial-name">Priya M. <span class="sample-label">(Sample)</span></div>
+            <div class="testimonial-role">Marketing Manager · LinkedIn Creator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Section -->
+<div class="cta-section">
+  <h2>Ready to Supercharge Your Social Media?</h2>
+  <p>Join thousands of creators and businesses generating captions that actually get engagement.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+    {% if current_user %}
+      <a href="/generate" class="btn btn-primary btn-lg"><i class="bi bi-stars"></i> Generate Caption Now</a>
+    {% else %}
+      <a href="/register" class="btn btn-primary btn-lg"><i class="bi bi-rocket-takeoff"></i> Start Free Today</a>
+      <a href="/login" class="btn btn-lg" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;">Sign In</a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:36px;height:36px;background:var(--gradient-primary);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;">✨</div>
+        <span style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;color:#fff;font-size:1rem;">CaptionAI</span>
+      </div>
+      <p class="brand-desc">AI-powered social media caption and hashtag generator for creators, marketers, and businesses.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="/generate">Generate Captions</a>
+      <a href="/hashtags">Hashtag Tool</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <a href="/register">Register</a>
+      <a href="/login">Login</a>
+      <a href="/profile">Profile</a>
+      <a href="/settings">Settings</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="mailto:support@captionai.example">support@captionai.example</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 CaptionAI — Social Media Caption Assistant. Built as a college project.</span>
+    <div style="display:flex;gap:12px;">
+      <span style="font-size:1rem;">📸</span>
+      <span style="font-size:1rem;">💼</span>
+      <span style="font-size:1rem;">🐦</span>
+    </div>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+  // Extra theme toggle for landing
+  document.getElementById('theme-toggle-landing')?.addEventListener('click', () => Theme.toggle());
+  // Mobile menu toggle with CSS class
+  document.getElementById('mobile-menu-btn')?.addEventListener('click', () => {
+    const nav = document.querySelector('.nav-links');
+    nav.classList.toggle('open');
+  });
+</script>
+</body>
+</html>

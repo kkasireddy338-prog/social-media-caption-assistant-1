@@ -1,0 +1,115 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Settings{% endblock %}
+{% block topbar_title %}Settings{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>⚙️ Settings</h1>
+  <p>Customize your CaptionAI experience.</p>
+</div>
+
+<div style="max-width:700px;display:flex;flex-direction:column;gap:24px;">
+
+  <!-- Theme -->
+  <div class="card">
+    <div class="card-body">
+      <h3 style="font-size:1.05rem;margin-bottom:4px;">🎨 Appearance</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px;">Choose your preferred color theme.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        <div class="theme-option" id="theme-light" onclick="Theme.set('light');updateThemeUI()" style="cursor:pointer;padding:16px 24px;border-radius:12px;border:2px solid var(--border);display:flex;align-items:center;gap:10px;transition:all 0.2s;flex:1;">
+          <span style="font-size:1.3rem;">☀️</span>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Light Mode</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Clean and bright</div>
+          </div>
+        </div>
+        <div class="theme-option" id="theme-dark" onclick="Theme.set('dark');updateThemeUI()" style="cursor:pointer;padding:16px 24px;border-radius:12px;border:2px solid var(--border);display:flex;align-items:center;gap:10px;transition:all 0.2s;flex:1;">
+          <span style="font-size:1.3rem;">🌙</span>
+          <div>
+            <div style="font-weight:600;font-size:0.9rem;">Dark Mode</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);">Easy on the eyes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Info -->
+  <div class="card">
+    <div class="card-body">
+      <h3 style="font-size:1.05rem;margin-bottom:4px;">👤 Account Information</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px;">Your account details.</p>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--bg-primary);border-radius:10px;">
+          <span style="font-size:0.85rem;color:var(--text-secondary);font-weight:500;">Username</span>
+          <span style="font-size:0.85rem;font-weight:600;">{{ user.username }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--bg-primary);border-radius:10px;">
+          <span style="font-size:0.85rem;color:var(--text-secondary);font-weight:500;">Email</span>
+          <span style="font-size:0.85rem;font-weight:600;">{{ user.email }}</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;background:var(--bg-primary);border-radius:10px;">
+          <span style="font-size:0.85rem;color:var(--text-secondary);font-weight:500;">Member Since</span>
+          <span style="font-size:0.85rem;font-weight:600;">{{ user.created_at[:10] if user.created_at else 'N/A' }}</span>
+        </div>
+      </div>
+      <a href="/profile" class="btn btn-ghost btn-sm mt-16">
+        <i class="bi bi-pencil"></i> Edit Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- About -->
+  <div class="card">
+    <div class="card-body">
+      <h3 style="font-size:1.05rem;margin-bottom:4px;">ℹ️ About CaptionAI</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">Version and technology information.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:10px;background:var(--bg-primary);border-radius:8px;">
+          <span style="color:var(--text-secondary);">Application</span>
+          <span style="font-weight:600;">Social Media Caption Assistant</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:10px;background:var(--bg-primary);border-radius:8px;">
+          <span style="color:var(--text-secondary);">Version</span>
+          <span style="font-weight:600;">1.0.0</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:10px;background:var(--bg-primary);border-radius:8px;">
+          <span style="color:var(--text-secondary);">Backend</span>
+          <span style="font-weight:600;">Python Flask</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:10px;background:var(--bg-primary);border-radius:8px;">
+          <span style="color:var(--text-secondary);">Database</span>
+          <span style="font-weight:600;">SQLite</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.85rem;padding:10px;background:var(--bg-primary);border-radius:8px;">
+          <span style="color:var(--text-secondary);">AI Engine</span>
+          <span style="font-weight:600;">Google Gemini 1.5 Flash</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="card" style="border-color:rgba(239,68,68,0.25);">
+    <div class="card-body">
+      <h3 style="font-size:1.05rem;color:var(--danger);margin-bottom:4px;">Sign Out</h3>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:16px;">Sign out of your account on this device.</p>
+      <a href="/logout" class="btn" style="background:rgba(239,68,68,0.1);color:var(--danger);border:1px solid rgba(239,68,68,0.3);">
+        <i class="bi bi-box-arrow-right"></i> Sign Out
+      </a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function updateThemeUI() {
+    const theme = Theme.get();
+    document.getElementById('theme-light').style.borderColor = theme === 'light' ? 'var(--primary)' : 'var(--border)';
+    document.getElementById('theme-dark').style.borderColor = theme === 'dark' ? 'var(--primary)' : 'var(--border)';
+  }
+  document.addEventListener('DOMContentLoaded', updateThemeUI);
+</script>
+{% endblock %}

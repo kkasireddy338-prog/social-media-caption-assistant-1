@@ -1,0 +1,133 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Welcome back, {{ current_user.username }}! 👋</h1>
+  <p>Here's an overview of your caption generation activity.</p>
+</div>
+
+<!-- Stats -->
+<div class="stats-grid">
+  <div class="stat-card animate-fadeInUp stagger-1">
+    <div class="stat-icon purple"><i class="bi bi-stars"></i></div>
+    <div class="stat-info">
+      <div class="stat-value" data-target="{{ stats.total_generated }}">{{ stats.total_generated }}</div>
+      <div class="stat-label">Total Generated</div>
+    </div>
+  </div>
+  <div class="stat-card animate-fadeInUp stagger-2">
+    <div class="stat-icon blue"><i class="bi bi-bookmark-fill"></i></div>
+    <div class="stat-info">
+      <div class="stat-value" data-target="{{ stats.saved_captions }}">{{ stats.saved_captions }}</div>
+      <div class="stat-label">Saved Captions</div>
+    </div>
+  </div>
+  <div class="stat-card animate-fadeInUp stagger-3">
+    <div class="stat-icon green"><i class="bi bi-heart-fill"></i></div>
+    <div class="stat-info">
+      <div class="stat-value" data-target="{{ stats.favorites }}">{{ stats.favorites }}</div>
+      <div class="stat-label">Favorites</div>
+    </div>
+  </div>
+  <div class="stat-card animate-fadeInUp stagger-4">
+    <div class="stat-icon amber"><i class="bi bi-graph-up"></i></div>
+    <div class="stat-info">
+      <div class="stat-value">{{ stats.platform_stats | length }}</div>
+      <div class="stat-label">Platforms Used</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions + Chart -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px;" class="dashboard-mid">
+  <!-- Quick Generate -->
+  <div class="card card-gradient" style="display:flex;flex-direction:column;justify-content:space-between;">
+    <div class="card-body">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;">
+        <div style="width:48px;height:48px;background:var(--gradient-primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 6px 20px rgba(124,58,237,0.35);">✨</div>
+        <div>
+          <h3 style="font-size:1.1rem;margin-bottom:3px;">Quick Generate</h3>
+          <p style="font-size:0.8rem;color:var(--text-secondary);">Create AI-powered captions instantly</p>
+        </div>
+      </div>
+      <a href="/generate" class="btn btn-primary w-100">
+        <i class="bi bi-stars"></i> Generate Caption Now
+      </a>
+      <a href="/hashtags" class="btn btn-ghost w-100 mt-16" style="justify-content:center;">
+        <i class="bi bi-hash"></i> Generate Hashtags
+      </a>
+    </div>
+  </div>
+
+  <!-- Platform Chart -->
+  <div class="card">
+    <div class="card-body">
+      <h3 style="font-size:1rem;margin-bottom:16px;">Platform Usage</h3>
+      {% if stats.platform_stats %}
+        <div class="chart-container">
+          <canvas id="platform-chart"></canvas>
+        </div>
+      {% else %}
+        <div class="empty-state" style="padding:30px 20px;">
+          <div style="font-size:2rem;margin-bottom:10px;">📊</div>
+          <p style="font-size:0.85rem;">Generate captions to see your platform usage breakdown.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Recent Captions -->
+<div class="card">
+  <div class="card-body">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <h3 style="font-size:1.05rem;">Recent Activity</h3>
+      <a href="/history" class="btn btn-ghost btn-sm">View All <i class="bi bi-arrow-right"></i></a>
+    </div>
+
+    {% if stats.recent_captions %}
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        {% for cap in stats.recent_captions %}
+        <div style="display:flex;align-items:flex-start;gap:14px;padding:14px;background:var(--bg-primary);border-radius:12px;border:1px solid var(--border);">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--gradient-primary);display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem;flex-shrink:0;">
+            {% if cap.platform == 'Instagram' %}📸
+            {% elif cap.platform == 'Facebook' %}👥
+            {% elif cap.platform == 'LinkedIn' %}💼
+            {% elif cap.platform == 'YouTube' %}▶️
+            {% else %}🐦{% endif %}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:0.85rem;color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ cap.caption_text }}</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);margin-top:4px;">{{ cap.platform }} · {{ cap.category }} · {{ cap.tone }}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="Clipboard.copy('{{ cap.caption_text | replace("'", "\\'") }}')">
+            <i class="bi bi-clipboard"></i>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">✨</div>
+        <h3>No captions yet</h3>
+        <p>Start generating captions to see your activity here.</p>
+        <a href="/generate" class="btn btn-primary mt-16"><i class="bi bi-stars"></i> Generate Now</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  @media(max-width:768px) {
+    .dashboard-mid { grid-template-columns: 1fr !important; }
+  }
+</style>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  window.dashboardStats = {{ stats | tojson }};
+</script>
+{% endblock %}

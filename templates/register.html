@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — CaptionAI</title>
+  <meta name="description" content="Create a free CaptionAI account and start generating AI-powered social media captions today.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% for category, message in messages %}
+    <div class="flask-flash d-none" data-message="{{ message }}" data-category="{{ category }}"></div>
+  {% endfor %}
+{% endwith %}
+<div id="toast-container" class="toast-container"></div>
+
+<div class="auth-page">
+  <div class="auth-card animate-fadeInUp" style="max-width:500px;">
+    <div class="auth-logo">
+      <div class="logo-icon">✨</div>
+      <span class="logo-text">CaptionAI</span>
+    </div>
+
+    <h1 class="auth-title">Create your account</h1>
+    <p class="auth-subtitle">Join thousands of creators generating better captions.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+          {% if category == 'danger' %}❌{% elif category == 'success' %}✅{% else %}ℹ️{% endif %}
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST" action="/register" class="auth-form" id="register-form">
+      <div class="form-group">
+        <label class="form-label" for="username">Username</label>
+        <div style="position:relative;">
+          <input type="text" class="form-control" id="username" name="username"
+                 value="{{ username or '' }}" placeholder="Choose a username" required minlength="3"
+                 style="padding-left:44px;">
+          <i class="bi bi-person" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);"></i>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <div style="position:relative;">
+          <input type="email" class="form-control" id="email" name="email"
+                 value="{{ email or '' }}" placeholder="you@example.com" required
+                 style="padding-left:44px;">
+          <i class="bi bi-envelope" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);"></i>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="password" name="password"
+                   placeholder="Min 8 characters" required minlength="8"
+                   style="padding-left:44px;" oninput="checkPasswordStrength(this.value)">
+            <i class="bi bi-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);"></i>
+          </div>
+          <div id="pwd-strength" style="margin-top:6px;height:4px;border-radius:2px;background:var(--border);overflow:hidden;">
+            <div id="pwd-bar" style="height:100%;width:0;border-radius:2px;transition:all 0.3s;"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirm_password">Confirm Password</label>
+          <div style="position:relative;">
+            <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                   placeholder="Repeat password" required style="padding-left:44px;">
+            <i class="bi bi-lock-fill" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.3);"></i>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 btn-lg" id="register-btn">
+        <i class="bi bi-rocket-takeoff"></i> Create Account
+      </button>
+
+      <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);text-align:center;margin-top:12px;">
+        By registering, you agree to our Terms of Service and Privacy Policy.
+      </p>
+    </form>
+
+    <div class="auth-link" style="text-align:center;margin-top:16px;">
+      Already have an account? <a href="/login">Sign in →</a>
+    </div>
+
+    <div style="margin-top:12px;text-align:center;">
+      <a href="/" style="font-size:0.8rem;color:rgba(255,255,255,0.3);">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+  function checkPasswordStrength(pwd) {
+    const bar = document.getElementById('pwd-bar');
+    let strength = 0;
+    if (pwd.length >= 8) strength++;
+    if (/[A-Z]/.test(pwd)) strength++;
+    if (/[0-9]/.test(pwd)) strength++;
+    if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+    const widths = ['0%', '25%', '50%', '75%', '100%'];
+    const colors = ['', '#ef4444', '#f59e0b', '#3b82f6', '#10b981'];
+    bar.style.width = widths[strength];
+    bar.style.background = colors[strength] || '';
+  }
+
+  document.getElementById('register-form').addEventListener('submit', function(e) {
+    const pwd = document.getElementById('password').value;
+    const cpwd = document.getElementById('confirm_password').value;
+    if (pwd !== cpwd) {
+      e.preventDefault();
+      Toast.error('Passwords do not match!');
+      return;
+    }
+    const btn = document.getElementById('register-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Creating account...';
+  });
+</script>
+</body>
+</html>

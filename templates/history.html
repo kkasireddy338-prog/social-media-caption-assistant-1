@@ -1,0 +1,66 @@
+{% extends "dashboard_base.html" %}
+{% block title %}Caption History{% endblock %}
+{% block topbar_title %}Caption History{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div>
+      <h1>🕐 Caption History</h1>
+      <p id="history-count" style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">Loading...</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-ghost" onclick="HistoryPage.exportAll()">
+        <i class="bi bi-download"></i> Export All
+      </button>
+      <a href="/generate" class="btn btn-primary"><i class="bi bi-stars"></i> Generate New</a>
+    </div>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+  <div class="search-box">
+    <i class="bi bi-search" style="color:var(--text-muted)"></i>
+    <input type="text" id="search-input" placeholder="Search history...">
+  </div>
+  <select class="form-select" id="platform-filter" style="width:auto;min-width:150px;">
+    <option value="">All Platforms</option>
+    {% for p in platforms %}
+    <option value="{{ p }}">{{ p }}</option>
+    {% endfor %}
+  </select>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="card-body" style="padding:0;overflow:auto;">
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:left;text-transform:uppercase;letter-spacing:0.06em;">Date</th>
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:left;text-transform:uppercase;letter-spacing:0.06em;">Platform</th>
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:left;text-transform:uppercase;letter-spacing:0.06em;">Category</th>
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:left;text-transform:uppercase;letter-spacing:0.06em;">Caption Preview</th>
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:center;text-transform:uppercase;letter-spacing:0.06em;">Copy</th>
+          <th style="padding:14px 20px;font-size:0.78rem;font-weight:600;color:var(--text-muted);text-align:center;text-transform:uppercase;letter-spacing:0.06em;">Delete</th>
+        </tr>
+      </thead>
+      <tbody id="history-table-body">
+        <tr>
+          <td colspan="6" style="padding:40px;text-align:center;color:var(--text-muted);">
+            <div class="spinner spinner-primary"></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+  tbody tr:hover { background: var(--bg-primary); }
+  tbody tr:last-child { border-bottom: none; }
+  td { padding: 14px 20px; vertical-align: middle; }
+</style>
+{% endblock %}
